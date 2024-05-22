@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "E:\\UnityGamesAssets\\UnityGames\\TapTapTimmber\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{EE3B725F-7192-DF33-CEAF-1558390F28BD}|Assembly-CSharp.csproj|e:\\unitygamesassets\\unitygames\\taptaptimmber\\assets\\scripts\\passiveincomemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EE3B725F-7192-DF33-CEAF-1558390F28BD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\passiveincomemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EE3B725F-7192-DF33-CEAF-1558390F28BD}|Assembly-CSharp.csproj|e:\\unitygamesassets\\unitygames\\taptaptimmber\\assets\\scripts\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EE3B725F-7192-DF33-CEAF-1558390F28BD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -19,12 +23,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "PassiveIncomeManager.cs",
+              "DocumentMoniker": "E:\\UnityGamesAssets\\UnityGames\\TapTapTimmber\\Assets\\Scripts\\PassiveIncomeManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PassiveIncomeManager.cs",
+              "ToolTip": "E:\\UnityGamesAssets\\UnityGames\\TapTapTimmber\\Assets\\Scripts\\PassiveIncomeManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PassiveIncomeManager.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T20:31:00.713Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Game.cs",
               "DocumentMoniker": "E:\\UnityGamesAssets\\UnityGames\\TapTapTimmber\\Assets\\Scripts\\Game.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Game.cs",
-              "ToolTip": "E:\\UnityGamesAssets\\UnityGames\\TapTapTimmber\\Assets\\Scripts\\Game.cs*",
-              "RelativeToolTip": "Assets\\Scripts\\Game.cs*",
-              "ViewState": "AQIAADUAAAAAAAAAAAAuwFgAAAApAAAA",
+              "ToolTip": "E:\\UnityGamesAssets\\UnityGames\\TapTapTimmber\\Assets\\Scripts\\Game.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Game.cs",
+              "ViewState": "AQIAADUAAAAAAAAAAAA8wFgAAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-05-19T22:04:59.142Z",
               "EditorCaption": ""

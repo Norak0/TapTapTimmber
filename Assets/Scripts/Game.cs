@@ -12,12 +12,14 @@ public class Game : MonoBehaviour
        
     }
 
+    private Dictionary<int, int> bonusCome; //Словарь для хранения значений пассивного дохода
     //Clicker
     [SerializeField] double Score;
     public Text ScoreText;
     private float ClickScore = 1;
     public int[] PassiveAmountBuild;
     public int[] ClickScores; // array to store ClickScore for each item
+    
 
 
     //Shop and upgrades
@@ -51,27 +53,33 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int numberOfItems = ClickScores.Length;
-        hasBeenPurchased = new bool[numberOfItems];
+        int numberOfItems = 8; // Убедитесь, что это соответствует количеству элементов, которые вы хотите использовать
 
-        clickIncrease = new float[numberOfItems];
-        decreaseClick = new float[numberOfItems];
-        costIncrease = new float[numberOfItems];
-        upgradeSinseChange = new int[numberOfItems];
-        upgradeBeforeChange = new int[numberOfItems];
 
-        for (int i = 0; i < upgradeBeforeChange.Length; i++)
-        {
-            upgradeBeforeChange[i] = 10;
-            upgradeSinseChange[i] = 0;
-        }
+    ClickScores = new int[numberOfItems];
+    hasBeenPurchased = new bool[numberOfItems];
+    clickIncrease = new float[numberOfItems];
+    decreaseClick = new float[numberOfItems];
+    costIncrease = new float[numberOfItems];
+    upgradeSinseChange = new int[numberOfItems];
+    upgradeBeforeChange = new int[numberOfItems];
+    PassiveAmountBuild = new int[numberOfItems];
 
-        for (int i = 0; i < CostInt.Length; i++)
-        {
-            costIncrease[0] = 0.35f;
-            clickIncrease[0] = 0.15f;
-            decreaseClick[0] = 0.0f;
-        }
+    bonusCome = new Dictionary<int, int>();
+    bonusCome.Add(6, 2);
+    bonusCome.Add(7, 5);
+    bonusCome.Add(8, 10);
+
+    for (int i = 0; i < numberOfItems; i++)
+    {
+        upgradeBeforeChange[i] = 30;
+        upgradeSinseChange[i] = 0;
+        costIncrease[i] = 0.23f;
+        clickIncrease[i] = 0.12f;
+        decreaseClick[i] = 0.10f;
+
+        
+    }
 
         StartCoroutine(BuildShop());
     }
@@ -125,7 +133,7 @@ public class Game : MonoBehaviour
                 hasBeenPurchased[itemIndex] = true;
 
                 // Пересчитываем общий ClickScore
-            int totalClickScore = 0;
+                int totalClickScore = 0;
                 for (int i = 0; i < ClickScores.Length; i++)
                 {
                     if (hasBeenPurchased[i])
@@ -170,16 +178,44 @@ public class Game : MonoBehaviour
             }
         }
     }
-    /*public void OnCLickBuyTool(int itemIndex)
+    public void OnCLickBuyBuild(int itemIndex)
     {
+
+        if (itemIndex < 0 || itemIndex >= CostInt.Length || itemIndex >= PassiveAmountBuild.Length || itemIndex >= costIncrease.Length)
+    {
+        Debug.LogError($"itemIndex {itemIndex} is out of bounds");
+        return;
+    }
+
         if (Score >= CostInt[itemIndex])
         {
+            
+
             //Main amount
 
+                // Вычитаем стоимость из общего счёта
             Score -= CostInt[itemIndex];
-            CostInt[itemIndex] *= 2;
-            ClickScore *= 2;
+        
+                // Обновляем стоимость и прирост пассива для текущего улучшения
+            CostInt[itemIndex] += Mathf.RoundToInt(CostInt[itemIndex] * costIncrease[itemIndex]);
+                // Получаем значение пассивного дохода для данной постройки из словаря
+            int bonusIncome = 0;
+            if (bonusCome.ContainsKey(itemIndex))
+            {
+                bonusIncome = bonusCome[itemIndex];
+            }
+
+            // Увеличиваем уровень пассивного дохода для данной постройки на значение из словаря
+            PassiveAmountBuild[itemIndex] += bonusIncome;
+
+            // Обновляем стоимость для следующего уровня
+            CostInt[itemIndex] += Mathf.RoundToInt(CostInt[itemIndex] * costIncrease[itemIndex]);
+            
+
+             // Обновляем текст стоимости для текущего улучшения
             CostText[itemIndex].text = CostInt[itemIndex] + "$";
+
+
 
             // increase level by 1
 
@@ -215,14 +251,10 @@ public class Game : MonoBehaviour
 
         }
 
-    }*/
+    }
 
 
-
-
-
-
-    public void OnCLickBuyBuild(int itemIndex)
+    /*public void OnCLickBuyBuild(int itemIndex)
     {
         if (Score >= CostInt[itemIndex])
         {
@@ -231,18 +263,20 @@ public class Game : MonoBehaviour
             PassiveAmountBuild[itemIndex] += 2; 
             CostText[itemIndex].text = CostInt[itemIndex] + "$";
         }
-    }
+    }*/
 
     IEnumerator BuildShop()
     {
         while (true)
         {
-            Score += PassiveAmountBuild[0];
+            for (int i = 0; i < PassiveAmountBuild.Length; i++)
+            {
+                Score += PassiveAmountBuild[i];
+            }
             yield return new WaitForSeconds(1);
         }
+
     }
-
-
     //suffix
 
     public string FormatScore(double score)
