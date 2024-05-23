@@ -53,36 +53,36 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int numberOfItems = 8; // Убедитесь, что это соответствует количеству элементов, которые вы хотите использовать
+       
+        // Убедитесь, что массивы инициализированы в инспекторе
 
+            int numberOfItems = ClickScores.Length;
+            hasBeenPurchased = new bool[numberOfItems];
+            clickIncrease = new float[numberOfItems];
+            decreaseClick = new float[numberOfItems];
+            costIncrease = new float[numberOfItems];
+            upgradeSinseChange = new int[numberOfItems];
+            upgradeBeforeChange = new int[numberOfItems];
+            PassiveAmountBuild = new int[numberOfItems];
 
-    ClickScores = new int[numberOfItems];
-    hasBeenPurchased = new bool[numberOfItems];
-    clickIncrease = new float[numberOfItems];
-    decreaseClick = new float[numberOfItems];
-    costIncrease = new float[numberOfItems];
-    upgradeSinseChange = new int[numberOfItems];
-    upgradeBeforeChange = new int[numberOfItems];
-    PassiveAmountBuild = new int[numberOfItems];
+            bonusCome = new Dictionary<int, int>();
+            bonusCome.Add(6, 2);
+            bonusCome.Add(7, 5);
+            bonusCome.Add(8, 10);
 
-    bonusCome = new Dictionary<int, int>();
-    bonusCome.Add(6, 2);
-    bonusCome.Add(7, 5);
-    bonusCome.Add(8, 10);
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                upgradeBeforeChange[i] = 30;
+                upgradeSinseChange[i] = 0;
+                costIncrease[i] = 0.23f;
+                clickIncrease[i] = 0.12f;
+                decreaseClick[i] = 0.10f;
 
-    for (int i = 0; i < numberOfItems; i++)
-    {
-        upgradeBeforeChange[i] = 30;
-        upgradeSinseChange[i] = 0;
-        costIncrease[i] = 0.23f;
-        clickIncrease[i] = 0.12f;
-        decreaseClick[i] = 0.10f;
+                
+            }
 
-        
-    }
-
-        StartCoroutine(BuildShop());
-    }
+            StartCoroutine(BuildShop());
+        }
 
     // Update is called once per frame
     void Update()
@@ -180,7 +180,7 @@ public class Game : MonoBehaviour
     }
     public void OnCLickBuyBuild(int itemIndex)
     {
-
+        
         if (itemIndex < 0 || itemIndex >= CostInt.Length || itemIndex >= PassiveAmountBuild.Length || itemIndex >= costIncrease.Length)
     {
         Debug.LogError($"itemIndex {itemIndex} is out of bounds");
