@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Controller.cs" />
-    <Compile Include="Assets\Scripts\PassiveIncomeManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

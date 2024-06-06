@@ -2,11 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Xml;
+using System.Xml.Serialization;
 using System;
-
+using System.IO;
+using UnityEngine.Android;
 public class Game : MonoBehaviour
 {
 
+    /*private void OnEnable()
+    {
+         Debug.Log("Game OnEnable called");
+        // Подписываемся на событие, вызываемое при выходе из приложения
+            LoadGameData();
+    }*/
+
+    // private void OnDisable()
+    // {
+    //      Debug.Log("Game OnDisable called");
+    //     // Убираем подписку на событие при выключении объекта
+    //     Application.quitting -= OnApplicationQuitting;
+    // }
+
+    
     public void OnClick()
     {
        
@@ -36,6 +54,7 @@ public class Game : MonoBehaviour
     public Text[] LevelUp;
     public int maxLevel = 50;
     public Button[] buyToolButton;
+    
 
 
     public void OnClickButton()
@@ -47,15 +66,146 @@ public class Game : MonoBehaviour
     //tools shop
 
 
+    void Awake()
+    {
+         var path = Application.persistentDataPath + "/data.xml";
+        
+        
+    }
+
+    void OnDestroy()
+    {
+        SaveGameData();
+    }
+    void OnApplicationQuit()
+    {
+        SaveGameData();
+    }
+
+    public void SaveGameData()
+    {
+        try
+        {
+            var path = Application.persistentDataPath + "/data.xml";
+            Debug.Log($"Saving game data to {path}");
 
 
+
+
+            GameData gameData = new GameData
+            {
+                Score = this.Score,
+                PassiveAmountBuild = this.PassiveAmountBuild,
+                ClickScores = this.ClickScores,
+                CostInt = this.CostInt,
+                hasBeenPurchased = this.hasBeenPurchased,
+                clickIncrease = this.clickIncrease,
+                costIncrease = this.costIncrease,
+                upgradeSinseChange = this.upgradeSinseChange,
+                upgradeBeforeChange = this.upgradeBeforeChange,
+                decreaseClick = this.decreaseClick,
+                ClickScore = this.ClickScore,
+                CostTextContents = new string[CostText.Length],
+                LevelUpContents = new string[LevelUp.Length],
+                IsLevelMax = new bool[LevelUp.Length]
+            };
+
+            for (int i = 0; i < LevelUp.Length; i++)
+            {
+                int currentLevel = int.Parse(LevelUp[i].text.Split(':')[1].Trim());
+                gameData.LevelUpContents[i] = currentLevel.ToString();
+                gameData.IsLevelMax[i] = currentLevel == maxLevel;
+
+                LevelUp[i].text = "Level: " + (gameData.IsLevelMax[i] ? "MAX" : currentLevel.ToString());
+                buyToolButton[i].interactable = !gameData.IsLevelMax[i];
+                CostText[i].text = gameData.IsLevelMax[i] ? "" : FormatPrice(CostInt[i]);
+            }
+
+            for (int i = 0; i < CostText.Length; i++)
+            {
+                gameData.CostTextContents[i] = CostText[i].text;
+            }
+
+            for (int i = 0; i < LevelUp.Length; i++)
+            {
+                gameData.LevelUpContents[i] = LevelUp[i].text;
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(GameData));
+            FileStream stream = new FileStream(path, FileMode.Create);
+            serializer.Serialize(stream, gameData);
+
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to save game data: " + e.Message);
+        }
+    }
+
+    
+
+    public void LoadGameData()
+    {
+        
+                var path = Application.persistentDataPath + "/data.xml";
+                if (File.Exists(path))
+                {
+                XmlSerializer serializer = new XmlSerializer(typeof(GameData));
+                using (FileStream stream = new FileStream(path, FileMode.Open))
+                {
+                
+                    GameData gameData = (GameData)serializer.Deserialize(stream);
+
+                    this.Score = gameData.Score;
+                    this.PassiveAmountBuild = gameData.PassiveAmountBuild;
+                    this.ClickScores = gameData.ClickScores;
+                    this.CostInt = gameData.CostInt;
+                    this.hasBeenPurchased = gameData.hasBeenPurchased;
+                    this.clickIncrease = gameData.clickIncrease;
+                    this.costIncrease = gameData.costIncrease;
+                    this.upgradeSinseChange = gameData.upgradeSinseChange;
+                    this.upgradeBeforeChange = gameData.upgradeBeforeChange;
+                    this.decreaseClick = gameData.decreaseClick;
+                    this.ClickScore = gameData.ClickScore;
+
+                    for (int i = 0; i < LevelUp.Length; i++)
+                    {
+                        int savedLevel = int.Parse(gameData.LevelUpContents[i].Split(':')[1].Trim());
+                        bool isLevelMax = gameData.IsLevelMax[i];
+
+                        LevelUp[i].text = "Level: " + (isLevelMax ? "MAX" : savedLevel.ToString());
+                        buyToolButton[i].interactable = !isLevelMax;
+                        CostText[i].text = isLevelMax ? "" : FormatPrice(CostInt[i]);
+                    }
+
+                    for (int i = 0; i < CostText.Length; i++)
+                    {
+                        CostText[i].text = gameData.CostTextContents[i];
+                    }
+
+                    for (int i = 0; i < LevelUp.Length; i++)
+                    {
+                        LevelUp[i].text = gameData.LevelUpContents[i];
+                    }
+
+                    RecalculateClickScore();
+                }
+            }
+    
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-       
+        
+       // Проверяем, есть ли уже разрешение на запись во внутреннее хранилище
+        if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageWrite))
+        {
+            // Запрашиваем разрешение у пользователя
+            Permission.RequestUserPermission(Permission.ExternalStorageWrite);
+        }
         // Убедитесь, что массивы инициализированы в инспекторе
-
+            
             int numberOfItems = ClickScores.Length;
             hasBeenPurchased = new bool[numberOfItems];
             clickIncrease = new float[numberOfItems];
@@ -64,6 +214,8 @@ public class Game : MonoBehaviour
             upgradeSinseChange = new int[numberOfItems];
             upgradeBeforeChange = new int[numberOfItems];
             PassiveAmountBuild = new int[numberOfItems];
+
+            
 
             bonusCome = new Dictionary<int, int>();
             bonusCome.Add(6, 2);
@@ -80,8 +232,41 @@ public class Game : MonoBehaviour
 
                 
             }
-
             StartCoroutine(BuildShop());
+            LoadGameData();
+        }
+
+        private void RecalculateClickScore()
+        {
+            // Проверяем, были ли куплены какие-либо улучшения
+        bool anyPurchased = false;
+        for (int i = 0; i < ClickScores.Length; i++)
+        {
+            if (hasBeenPurchased[i])
+            {
+                anyPurchased = true;
+                break;
+            }
+        }
+
+        // Если ни одно улучшение не было куплено, устанавливаем ClickScore равным 1, иначе пересчитываем его
+        if (!anyPurchased)
+        {
+            ClickScore = 1;
+        }
+        else
+        {
+            // Пересчитываем общий ClickScore на основе загруженных ClickScores
+            int totalClickScore = 0;
+            for (int i = 0; i < ClickScores.Length; i++)
+            {
+                if (hasBeenPurchased[i])
+                {
+                    totalClickScore += ClickScores[i];
+                }
+            }
+            ClickScore = totalClickScore;
+        }
         }
 
     // Update is called once per frame
@@ -141,6 +326,7 @@ public class Game : MonoBehaviour
                     totalClickScore += ClickScores[i]; 
                     }
                 }
+                RecalculateClickScore();
         
                 // Обновляем текущий ClickScore
             ClickScore = totalClickScore;
@@ -180,13 +366,7 @@ public class Game : MonoBehaviour
     }
     public void OnCLickBuyBuild(int itemIndex)
     {
-        
-        if (itemIndex < 0 || itemIndex >= CostInt.Length || itemIndex >= PassiveAmountBuild.Length || itemIndex >= costIncrease.Length)
-    {
-        Debug.LogError($"itemIndex {itemIndex} is out of bounds");
-        return;
-    }
-
+     
         if (Score >= CostInt[itemIndex])
         {
             
@@ -323,6 +503,28 @@ public class Game : MonoBehaviour
 
 
 }
+
+[Serializable]
+public class GameData
+{
+    public double Score;
+    public int[] PassiveAmountBuild;
+    public int[] ClickScores;
+    public float[] CostInt;
+    public bool[] hasBeenPurchased;
+    public float[] clickIncrease;
+    public float[] costIncrease;
+    public int[] upgradeSinseChange;
+    public int[] upgradeBeforeChange;
+    public float[] decreaseClick;
+    public float ClickScore;
+    public string[] CostTextContents;
+    public string[] LevelUpContents;
+    public bool[] IsLevelMax;
+}
+
+
+
    
 
 
